@@ -1,4 +1,4 @@
-# Genmai [![Build Status](https://travis-ci.org/naoina/genmai.png?branch=master)](https://travis-ci.org/naoina/genmai)
+# Genmai [![Build Status](https://travis-ci.org/eadz/genmai.png?branch=master)](https://travis-ci.org/eadz/genmai)
 
 Simple, better and easy-to-use ORM library for [Golang](http://golang.org/).
 
@@ -19,7 +19,7 @@ Database dialect currently supported are:
 
 ## Installation
 
-    go get -u github.com/naoina/genmai
+    go get -u github.com/eadz/genmai
 
 ## Schema
 
@@ -60,7 +60,7 @@ import (
     _ "github.com/mattn/go-sqlite3"
     // _ "github.com/go-sql-driver/mysql"
     // _ "github.com/lib/pq"
-    "github.com/naoina/genmai"
+    "github.com/eadz/genmai"
 )
 
 // define a table schema.
@@ -246,7 +246,7 @@ import (
     _ "github.com/mattn/go-sqlite3"
     // _ "github.com/go-sql-driver/mysql"
     // _ "github.com/lib/pq"
-    "github.com/naoina/genmai"
+    "github.com/eadz/genmai"
 )
 
 type TestTable struct {
@@ -363,7 +363,7 @@ if err := db.Begin(); err != nil {
 
 ### Using any table name
 
-You can implement [TableNamer](https://godoc.org/github.com/naoina/genmai#TableNamer) interface to use any table name.
+You can implement [TableNamer](https://godoc.org/github.com/eadz/genmai#TableNamer) interface to use any table name.
 
 ```go
 type UserTable struct {
@@ -471,7 +471,7 @@ type User struct {
 }
 ```
 
-See the Godoc of [TimeStamp](http://godoc.org/github.com/naoina/genmai#TimeStamp) for more information.
+See the Godoc of [TimeStamp](http://godoc.org/github.com/eadz/genmai#TimeStamp) for more information.
 
 If you'll override hook method defined in embedded struct, you'll should call the that hook in overridden method.
 For example in above struct case:
@@ -490,7 +490,7 @@ func (u *User) BeforeInsert() error {
 
 API document and more examples are available here:
 
-http://godoc.org/github.com/naoina/genmai
+http://godoc.org/github.com/eadz/genmai
 
 ## TODO
 
