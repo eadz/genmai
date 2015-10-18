@@ -478,6 +478,31 @@ func Test_Select(t *testing.T) {
 		}
 	}()
 
+	// SELECT * FROM test_model GROUP BY "name";
+	func() {
+		db := newTestDB(t)
+		defer db.Close()
+		db.SetLogOutput(os.Stdout)
+		var actual []testModel
+		if err := db.Select(&actual, db.GroupBy("test_model", "name")); err != nil {
+			t.Fatal(err)
+		}
+		expect := []testModel{
+			{6, "dup", "dup_addr"},
+			{7, "dup", "dup_addr"},
+			{5, "other", "addr5"},
+			{4, "other", "addr4"},
+			{8, "other1", "addr8"},
+			{9, "other2", "addr9"},
+			{1, "test1", "addr1"},
+			{2, "test2", "addr2"},
+			{3, "test3", "addr3"},
+		}
+		if !reflect.DeepEqual(actual, expect) {
+			t.Errorf(`DB.Select(&actual, DB.GroupBy("test_model", "name")) => %#v; want %#v`, actual, expect)
+		}
+	}()
+
 	// SELECT * FROM test_model LIMIT 2 OFFSET 3;
 	func() {
 		db := newTestDB(t)

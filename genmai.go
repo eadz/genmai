@@ -143,6 +143,11 @@ func (db *DB) OrderBy(table interface{}, column interface{}, order ...interface{
 	return newCondition(db).OrderBy(table, column, order...)
 }
 
+// GroupBy returns a new Condition of "ORDER BY" clause.
+func (db *DB) GroupBy(table interface{}, column interface{}) *Condition {
+	return newCondition(db).GroupBy(table, column)
+}
+
 // Limit returns a new Condition of "LIMIT" clause.
 func (db *DB) Limit(lim int) *Condition {
 	return newCondition(db).Limit(lim)
@@ -718,6 +723,8 @@ func (db *DB) columns(tableName string, columns []interface{}) string {
 			names[i] = ColumnName(db.dialect, tableName, c)
 		case *Distinct:
 			names[i] = fmt.Sprintf("DISTINCT %s", db.columns(tableName, ToInterfaceSlice(c.columns)))
+		// case GroupBy:
+		// 	names[i] = fmt.Sprintf("GROUP BY %s", db.columns(tableName, ToInterfaceSlice(c.columns)))
 		default:
 			panic(fmt.Errorf("column name must be string, Raw or *Distinct, got %T", c))
 		}
@@ -1022,6 +1029,12 @@ type Distinct struct {
 	columns []string
 }
 
+//
+// // GroupBy represents a "GROUP BY" statement.
+// type GroupBy struct {
+// 	columns []string
+// }
+
 // Function represents a function of SQL.
 type Function struct {
 	// A function name.
@@ -1051,6 +1064,7 @@ const (
 	And
 	Or
 	OrderBy
+	GroupBy
 	Limit
 	Offset
 	In
@@ -1074,6 +1088,7 @@ var clauseStrings = []string{
 	And:       "AND",
 	Or:        "OR",
 	OrderBy:   "ORDER BY",
+	GroupBy:   "GROUP BY",
 	Limit:     "LIMIT",
 	Offset:    "OFFSET",
 	In:        "IN",
@@ -1102,6 +1117,11 @@ type expr struct {
 type orderBy struct {
 	column column // column name.
 	order  Order  // direction.
+}
+
+// groupBy represents a "GROUP BY" query.
+type groupBy struct {
+	columns []column // column name.
 }
 
 // between represents a "BETWEEN" query.
@@ -1185,6 +1205,12 @@ func (c *Condition) OrderBy(table, col interface{}, order ...interface{}) *Condi
 		order = rest[2:]
 	}
 	return c.appendQuery(300, OrderBy, orderbys)
+}
+
+// GroupBy adds "GROUP BY" clause to the Condition and returns it for method chain.
+func (c *Condition) GroupBy(table, col interface{}) *Condition {
+
+	return c.appendQuery(300, GroupBy, table, col)
 }
 
 // Limit adds "LIMIT" clause to the Condition and returns it for method chain.
@@ -1292,6 +1318,14 @@ func (c *Condition) build(numHolders int, inner bool) (queries []string, args []
 					queries = append(queries, ",", ColumnName(c.db.dialect, o.column.table, o.column.name), o.order.String())
 				}
 			}
+		case []groupBy:
+			o := e[0]
+			queries = append(queries, ColumnName(c.db.dialect, o.columns[0].table, o.columns[0].name))
+			// if len(e) > 1 {
+			// 	for _, o := range e[1:] {
+			// 		queries = append(queries, ",", ColumnName(c.db.dialect, o.column.table, o.column.name))
+			// 	}
+			// }
 		case *column:
 			col := ColumnName(c.db.dialect, e.table, e.name)
 			queries = append(queries, col)

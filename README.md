@@ -201,6 +201,17 @@ if err := db.Select(&results, db.OrderBy("id", genmai.ASC).Offset(2).Limit(10));
 fmt.Printf("%v\n", results)
 ```
 
+### Group by
+
+```go
+var results []TestTable
+if err := db.Select(&results, db.GroupBy("name")); err != nil {
+    panic(err)
+}
+fmt.Printf("%v\n", results)
+```
+
+
 ### Distinct
 
 ```go

@@ -130,6 +130,19 @@ func ExampleDB_Select_orderBy() {
 	fmt.Println(results)
 }
 
+func ExampleDB_Select_groupBy() {
+	db, err := genmai.New(&genmai.SQLite3Dialect{}, ":memory:")
+	if err != nil {
+		log.Fatal(err)
+	}
+	var results []TestModel
+	// SELECT "test_model".* FROM "test_model" GROUP BY "name";
+	if err := db.Select(&results, db.GroupBy("test_model", "name")); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(results)
+}
+
 func ExampleDB_Select_orderByWithSpecificTable() {
 	db, err := genmai.New(&genmai.SQLite3Dialect{}, ":memory:")
 	if err != nil {
